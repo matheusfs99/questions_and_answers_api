@@ -1,0 +1,35 @@
+from django.db import models
+
+
+class Answer(models.Model):
+    answer_text = models.TextField(max_length=255)
+    is_correct = models.BooleanField(default=False)
+    from_question = models.ForeignKey("Question", related_name="answers", null=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        if len(str(self.answer_text)) < 15:
+            return self.answer_text
+        return self.answer_text[:15] + "..."
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        question = Question.objects.get(pk=self.from_question.id)
+        question.question_answers.add(self.pk)
+        question.save()
+
+
+class Question(models.Model):
+    question_text = models.TextField()
+    question_answers = models.ManyToManyField("Answer", related_name="question", null=True, blank=True)
+
+    def __str__(self):
+        if len(str(self.question_text)) < 15:
+            return self.question_text
+        return self.question_text[:15] + "..."
+
+
+class Activity(models.Model):
+    questions = models.ManyToManyField("Question", null=True, blank=True)
+
+    def __str__(self):
+        return f"Atividade {self.pk}"
