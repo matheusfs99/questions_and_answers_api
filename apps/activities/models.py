@@ -1,7 +1,8 @@
 from django.db import models
+from apps.base.models import BaseModel
 
 
-class Answer(models.Model):
+class Answer(BaseModel):
     answer_text = models.TextField(max_length=255)
     is_correct = models.BooleanField(default=False)
     from_question = models.ForeignKey("Question", related_name="answers", null=True, on_delete=models.CASCADE)
@@ -18,7 +19,7 @@ class Answer(models.Model):
         question.save()
 
 
-class Question(models.Model):
+class Question(BaseModel):
     question_text = models.TextField()
     question_answers = models.ManyToManyField("Answer", related_name="question", null=True, blank=True)
 
@@ -28,7 +29,7 @@ class Question(models.Model):
         return self.question_text[:15] + "..."
 
 
-class Activity(models.Model):
+class Activity(BaseModel):
     questions = models.ManyToManyField("Question", null=True, blank=True)
 
     def __str__(self):
