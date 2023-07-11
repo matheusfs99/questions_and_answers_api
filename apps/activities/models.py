@@ -14,9 +14,10 @@ class Answer(BaseModel):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        question = Question.objects.get(pk=self.from_question.id)
-        question.question_answers.add(self.pk)
-        question.save()
+        if self.from_question:
+            question = Question.objects.get(pk=self.from_question.id)
+            question.question_answers.add(self.pk)
+            question.save()
 
 
 class Question(BaseModel):
